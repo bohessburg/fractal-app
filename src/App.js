@@ -35,13 +35,13 @@ function App() {
           a = aa - bb + ca;
           b = twoab + cb;
 
-          //if |z| > 2, c is not part of the mandelbrot set
+          //if |z| > 2, c is not part of the mandelbrot set.
           if (aa + bb > 4.0) {
             break;
           }
           n++;
         }
-
+        
         const bright = mapRange(n, 0, 255, iterations);
         
         const color = n === iterations ? 'black' : `rgb(${bright},0,${bright})`;
