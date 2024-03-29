@@ -44,6 +44,7 @@ function App() {
           
           n++;
         }
+        iterationCounts[y][x] = n;
 
         const bright = mapRange(n, 0, 255, iterations);
         
