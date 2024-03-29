@@ -1,5 +1,6 @@
 import React, {useRef, useEffect, useState} from 'react'
 import './App.css';
+import {histogram} from './Plots.js'
 
 function App() {
   const canvasRef = useRef(null);
@@ -14,34 +15,36 @@ function App() {
     const width = ctx.canvas.width;
     const height = ctx.canvas.height;
 
+    var iterationCounts = Array.from({ length: height }, () => new Array(width).fill(0));
+
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
-        //map each pixel to a complex number c = a+bi
-        let a = mapRange(x, -2, 2, width);
-        let b = mapRange(y, -2, 2, height);
 
-        const ca = a;
-        const cb = b;
+        let ca = mapRange(x, -2, 0.5, width);
+        let cb = mapRange(y, -1.2, 1.2, height);
+        let w = 0;
         let n = 0;
+        let a = 0;
+        let b = 0;
+        let a2 = 0;
+        let b2 = 0;
 
-        //iterate the function: f(z) = z^2 + c on itself, starting at z=0
         while (n < iterations) {
-          //(a+bi)^2 = (a^2 - b^2) + 2abi
-          const aa = a * a;
-          const bb = b * b;
-          const twoab = 2.0 * a * b;
 
-          //new value for z (z_n = z_(n-1)^2 + c)
-          a = aa - bb + ca;
-          b = twoab + cb;
-
-          //if |z| > 2, c is not part of the mandelbrot set.
-          if (aa + bb > 4.0) {
+          if (a2 + b2 > 4.0) {
             break;
           }
+          a = a2 - b2 + ca;
+          b = w - a2 - b2 + cb;
+
+          a2 = a * a;
+          b2 = b * b;
+
+          w = (a + b) * (a + b);
+          
           n++;
         }
-        
+
         const bright = mapRange(n, 0, 255, iterations);
         
         const color = n === iterations ? 'black' : `rgb(${bright},0,${bright})`;
@@ -82,6 +85,6 @@ return (
     <canvas ref={canvasRef} width={800} height={600} />
   </div>
 );
-}
+  }
 
 export default App;
