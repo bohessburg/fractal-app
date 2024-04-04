@@ -1,17 +1,13 @@
 import React, {useRef, useEffect, useState, useCallback} from 'react'
 import './App.css';
-import {histogram} from './Plots.js'
+import {histogram, mapRange} from './Plots.js'
 
 function App() {
   const canvasRef = useRef(null);
   const [inputValue, setInputValue] = useState('');
   const [iterationSet, setIterationCount] = useState(100);
 
-  const mapRange = (value, range_min, range_max, value_range) => {
-    return ((range_max - range_min) / value_range) * value + range_min
-  };
-
-  const drawFractal = useCallback((ctx,maxIterations) => {
+  const drawFractal = useCallback((ctx,maxIterations,plotType,palette) => {
     const width = ctx.canvas.width;
     const height = ctx.canvas.height;
 
@@ -50,28 +46,66 @@ function App() {
         //const testhue = histogram('purple', [[1,40],[37,19],[100,0]]);
         //console.log(testhue);
 
-        const bright = mapRange(n, 0, 255, maxIterations);
-        const color = n === maxIterations ? 'black' : `rgb(${bright},0,${bright})`;
+        //const bright = mapRange(n, 0, 255, maxIterations);
+        //const color = n === maxIterations ? 'black' : `rgb(${bright},0,${bright})`;
         //const color = n === maxIterations ? 'black' : `rgb(${hue[y][x]},0,${hue[y][x]})`;
 
+        //ctx.fillStyle = color;
+        //ctx.fillRect(x,y,1,1);
+    }
+  }
+
+  if(plotType === 'histogram') {
+    const hue = histogram(iterationCounts, maxIterations);
+
+    var val_r = 0;
+    var val_g = 0;
+    var val_b = 0;
+
+    switch(palette){
+      case 'red':
+        val_r = 1;
+        break;
+      case 'green':
+        val_g = 1;
+        break;
+      case 'blue':
+        val_b = 1;
+        break;
+      case 'purple':
+        val_b = 1;
+        val_r = 1;
+        break;
+      case 'yellow':
+        val_r = 1;
+        val_g = 1;
+        break;
+      case 'cyan':
+        val_b = 1;
+        val_g = 1;
+        break;
+      case 'gray':
+        val_r = 1;
+        val_g = 1;
+        val_b = 1;
+        break;
+    }
+
+    for(let x = 0; x < width; x++) {
+      for(let y = 0; y < height; y++) {
+        const color = iterationCounts[y][x] === maxIterations ? 'black' : `rgb(${hue[y][x]*val_r},${hue[y][x]*val_g},${hue[y][x]*val_b})`;
         ctx.fillStyle = color;
         ctx.fillRect(x,y,1,1);
+      }
     }
   }
-  const hue = histogram('red', iterationCounts, maxIterations);
-  for(let x = 0; x < width; x++) {
-    for(let y = 0; y < height; y++) {
-      const color = iterationCounts[y][x] === maxIterations ? 'black' : `rgb(${hue[y][x]},0,${hue[y][x]})`;
-      ctx.fillStyle = color;
-      ctx.fillRect(x,y,1,1);
-    }
-  }
+
 },[]);
 
 useEffect(() => {
   const canvas = canvasRef.current;
   const context = canvas.getContext('2d');
-  drawFractal(context, iterationSet);
+  drawFractal(context, iterationSet, 'histogram','cyan');
 },[iterationSet,drawFractal]);
 
 const handleInputChange = (event) => {
