@@ -1,13 +1,16 @@
 import React, {useRef, useEffect, useState, useCallback} from 'react'
 import './App.css';
-import {histogram, mapRange} from './Plots.js'
+import {histogram, mapRange, singleHueRed, palettes} from './Plots.js'
 
 function App() {
   const canvasRef = useRef(null);
   const [inputValue, setInputValue] = useState('');
   const [iterationSet, setIterationCount] = useState(100);
+  const [selectedPalette, setSelectedPalette] = useState('red');
 
   const drawFractal = useCallback((ctx,maxIterations,plotType,palette) => {
+    const paletteFunc = palettes[palette];
+
     const width = ctx.canvas.width;
     const height = ctx.canvas.height;
 
@@ -41,59 +44,16 @@ function App() {
           n++;
         }
         iterationCounts[y][x] = n;
-        
-        
-        //const testhue = histogram('purple', [[1,40],[37,19],[100,0]]);
-        //console.log(testhue);
 
-        //const bright = mapRange(n, 0, 255, maxIterations);
-        //const color = n === maxIterations ? 'black' : `rgb(${bright},0,${bright})`;
-        //const color = n === maxIterations ? 'black' : `rgb(${hue[y][x]},0,${hue[y][x]})`;
-
-        //ctx.fillStyle = color;
-        //ctx.fillRect(x,y,1,1);
     }
   }
 
   if(plotType === 'histogram') {
     const hue = histogram(iterationCounts, maxIterations);
 
-    var val_r = 0;
-    var val_g = 0;
-    var val_b = 0;
-
-    switch(palette){
-      case 'red':
-        val_r = 1;
-        break;
-      case 'green':
-        val_g = 1;
-        break;
-      case 'blue':
-        val_b = 1;
-        break;
-      case 'purple':
-        val_b = 1;
-        val_r = 1;
-        break;
-      case 'yellow':
-        val_r = 1;
-        val_g = 1;
-        break;
-      case 'cyan':
-        val_b = 1;
-        val_g = 1;
-        break;
-      case 'gray':
-        val_r = 1;
-        val_g = 1;
-        val_b = 1;
-        break;
-    }
-
     for(let x = 0; x < width; x++) {
       for(let y = 0; y < height; y++) {
-        const color = iterationCounts[y][x] === maxIterations ? 'black' : `rgb(${hue[y][x]*val_r},${hue[y][x]*val_g},${hue[y][x]*val_b})`;
+        const color = hue[y][x] === -1 ? 'black' : paletteFunc(hue[y][x]);
         ctx.fillStyle = color;
         ctx.fillRect(x,y,1,1);
       }
@@ -105,8 +65,8 @@ function App() {
 useEffect(() => {
   const canvas = canvasRef.current;
   const context = canvas.getContext('2d');
-  drawFractal(context, iterationSet, 'histogram','cyan');
-},[iterationSet,drawFractal]);
+  drawFractal(context, iterationSet, 'histogram',selectedPalette);
+},[iterationSet,drawFractal,selectedPalette]);
 
 const handleInputChange = (event) => {
   setInputValue(event.target.value);
@@ -119,6 +79,11 @@ const handleKeyPress = (event) => {
   }
 };
 
+const handleDropdownChange = (event) => {
+  const key = event.target.value;
+  setSelectedPalette(key);
+}
+
 return (
   <div className="App">
     <input
@@ -127,6 +92,16 @@ return (
       onChange = {handleInputChange}
       onKeyPress = {handleKeyPress}
       />
+    <select value={selectedPalette} onChange = {e=>setSelectedPalette(e.target.value)}>
+      <option value="red">red</option>
+      <option value="green">green</option>
+      <option value="blue">blue</option>
+      <option value="violet">violet</option>
+      <option value="cyan">cyan</option>
+      <option value="yellow">yellow</option>
+      <option value="gray">gray</option>
+      
+      </select>
     <canvas ref={canvasRef} width={800} height={600} />
   </div>
 );
