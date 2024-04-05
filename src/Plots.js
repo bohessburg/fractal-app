@@ -11,6 +11,25 @@ const singleHueCyan = (value) => {return `rgb(0,${value},${value})`;}
 const singleHueYellow = (value) => {return `rgb(${value},${value},0)`;}
 const singleHueGray = (value) => {return `rgb(${value},${value},${value})`;}
 
+const rainbow = (value) => {
+    if (value < 256/5) {
+        return `rgb(255,${value},0)`;
+    }
+    if (256/5 <= value && value < 512/5) {
+        return `rgb(255-${value},255,0)`;
+    }
+    if (512/5 <= value && value < 768/5) {
+        return `rgb(0,255,${value})`;
+    }
+    if (768/5 <= value && value < 1024/5) {
+        return `rgb(0,255-${value},255)`;
+    }
+    if (1024/5 <= value && value < 1280/5) {
+        return `rgb(${value},0,255)`;
+    }
+
+}
+
 const palettes = {
     'red' : singleHueRed,
     'green' : singleHueGreen,
@@ -18,7 +37,8 @@ const palettes = {
     'violet' : singleHueViolet,
     'cyan' : singleHueCyan,
     'yellow' : singleHueYellow,
-    'gray' : singleHueGray
+    'gray' : singleHueGray,
+    'rainbow' : rainbow
 }
 
 const histogram = (iterationCounts,maxIterations) => {
@@ -54,4 +74,4 @@ const histogram = (iterationCounts,maxIterations) => {
 
 }
 
-export{histogram, mapRange, singleHueRed, palettes}
+export{histogram, mapRange, palettes}

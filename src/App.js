@@ -1,6 +1,6 @@
 import React, {useRef, useEffect, useState, useCallback} from 'react'
 import './App.css';
-import {histogram, mapRange, singleHueRed, palettes} from './Plots.js'
+import {histogram, mapRange, palettes} from './Plots.js'
 
 function App() {
   const canvasRef = useRef(null);
@@ -79,11 +79,6 @@ const handleKeyPress = (event) => {
   }
 };
 
-const handleDropdownChange = (event) => {
-  const key = event.target.value;
-  setSelectedPalette(key);
-}
-
 return (
   <div className="App">
     <input
@@ -100,6 +95,7 @@ return (
       <option value="cyan">cyan</option>
       <option value="yellow">yellow</option>
       <option value="gray">gray</option>
+      <option value="rainbow">rainbow</option>
       
       </select>
     <canvas ref={canvasRef} width={800} height={600} />
