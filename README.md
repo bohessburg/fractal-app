@@ -1,6 +1,8 @@
-# Getting Started with Create React App
+# Fractal App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+I created this a while ago mostly to learn a bit about the React framework. Pretty much just displays the mandelbrot set, not a lot of features. It was pretty interesting trying to figure out how to make a mathy program in an async language since most of my programming experience up to this point was pure python.
 
 ## Available Scripts
 
